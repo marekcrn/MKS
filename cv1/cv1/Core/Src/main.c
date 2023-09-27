@@ -94,28 +94,41 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	  //LED blink
-	  //LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
-	  //LL_mDelay(200);
-	  //LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
-	  //LL_mDelay(200);
+	while (1) {
+		//LED blink
+		/*LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+		 LL_mDelay(200);
+		 LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+		 LL_mDelay(200);*/
 
-	  //LED blink SOS
-	  uint8_t pole[32] = {1,0,1,0,1,0,0,1,1,1,0,1,1,1,0,1,1,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0};
+		//LED blink SOS pole
+		/*uint8_t pole[] = { 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1,
+				1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
 
-	  for (uint8_t i=0; i<sizeof(pole); i++){
-		  uint8_t x = pole[i];
-		  if (x == 1) {
-			  LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
-		  } else {
-			  LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
-		  }
-		  LL_mDelay(200);
-	  }
+		for (uint8_t i = 0; i < sizeof(pole); i++) {
+			uint8_t x = pole[i];
+			if (x == 1) {
+				LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+			} else {
+				LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+			}
+			LL_mDelay(200);
+		}*/
 
-    /* USER CODE END WHILE
+		//LED blink SOS binary
+		uint32_t data = 0b00000001010100111011101110010101;
+
+		for (uint8_t j = 0; j < 32; j++) {
+
+			if (data & (1 << j)) {
+				LL_GPIO_SetOutputPin(LD2_GPIO_Port, LD2_Pin);
+			} else {
+				LL_GPIO_ResetOutputPin(LD2_GPIO_Port, LD2_Pin);
+			}
+			LL_mDelay(200);
+		}
+
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
