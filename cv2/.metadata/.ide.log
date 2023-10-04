@@ -1019,3 +1019,39 @@
 2023-10-04 16:34:00,501 [INFO] ProjectBuilder:4626 - Time for Generating toolchain IDE Files: 1631mS.
 2023-10-04 16:34:00,502 [INFO] ProjectBuilder:2935 - Time for Copy CMSIS : 1mS.
 2023-10-04 16:34:00,504 [INFO] ProjectBuilder:2935 - Time for Copy CMSIS : 0mS.
+2023-10-04 17:48:29,483 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 253040120 Bytes (780140544)
+2023-10-04 17:48:31,185 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 296558072 Bytes (780140544)
+2023-10-04 17:48:32,835 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 353703416 Bytes (780140544)
+2023-10-04 17:48:33,020 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: NVIC
+2023-10-04 17:48:33,020 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: USART
+2023-10-04 17:48:33,020 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: SYS
+2023-10-04 17:48:33,020 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: GPIO
+2023-10-04 17:48:33,020 [INFO] BlockDiagram:2759 - set Specific Code input for plugin: RCC
+2023-10-04 17:48:33,021 [INFO] CodeGenerator:799 - code generatio: config db path: C:\appz\ST\STM32CubeIDE_1.10.1\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.9.1.202307191849\\db\
+2023-10-04 17:48:33,146 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\license.tmp_save
+2023-10-04 17:48:33,270 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\license.tmp
+2023-10-04 17:48:33,323 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\gpio.tmp_save
+2023-10-04 17:48:33,444 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\gpio.tmp
+2023-10-04 17:48:33,555 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\Core\Src\stm32f0xx_it.c_save
+2023-10-04 17:48:33,871 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\Core\Src\stm32f0xx_it.c
+2023-10-04 17:48:33,884 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\stm32f0xx_it.h_save
+2023-10-04 17:48:33,972 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\stm32f0xx_it.h
+2023-10-04 17:48:33,980 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\system.tmp_save
+2023-10-04 17:48:34,090 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\MXTmpFiles\system.tmp
+2023-10-04 17:48:34,095 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\stm32_assert.h_save
+2023-10-04 17:48:34,172 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\stm32_assert.h
+2023-10-04 17:48:34,175 [WARN] IPConfigManager:2937 - Warning: the RefConfig RCC_LSEDRIVE_CONFIG is not available in your config.xml file
+2023-10-04 17:48:34,178 [WARN] IPConfigManager:2937 - Warning: the RefConfig RCC_ClockConfig is not available in your config.xml file
+2023-10-04 17:48:34,178 [WARN] IPConfigManager:2937 - Warning: the RefConfig RCC_MCOConfig is not available in your config.xml file
+2023-10-04 17:48:34,178 [WARN] IPConfigManager:2937 - Warning: the RefConfig RCC_interrupt_Time_SYSTICK_Config is not available in your config.xml file
+2023-10-04 17:48:34,179 [WARN] IPConfigManager:2937 - Warning: the RefConfig RCC_SYSTICK_CONFIG is not available in your config.xml file
+2023-10-04 17:48:34,202 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\main.h_save
+2023-10-04 17:48:34,311 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\Core\Inc\main.h
+2023-10-04 17:48:34,325 [INFO] CodeEngine:255 - oldGeneratedFile, C:\Temp\xcerny76\MSK\cv2\cv2\Core\Src\main.c_save
+2023-10-04 17:48:34,463 [INFO] CodeEngine:279 - Generated code: C:\Temp\xcerny76\MSK\cv2\cv2\Core\Src\main.c
+2023-10-04 17:48:34,962 [INFO] ProjectBuilder:3064 - Time for Copy HAL[1] : 80mS.
+2023-10-04 17:48:34,965 [INFO] ProjectBuilder:4404 - Project Generator version: 4.1.0
+2023-10-04 17:48:35,146 [INFO] ConfigFileManager:1457 - The Die is : DIE440
+2023-10-04 17:48:36,607 [INFO] ProjectBuilder:4626 - Time for Generating toolchain IDE Files: 1641mS.
+2023-10-04 17:48:36,607 [INFO] ProjectBuilder:2935 - Time for Copy CMSIS : 0mS.
+2023-10-04 17:48:36,609 [INFO] ProjectBuilder:2935 - Time for Copy CMSIS : 0mS.

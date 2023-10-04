@@ -33,6 +33,7 @@
 /* USER CODE BEGIN PD */
 #define LED_TIME_BLINK 300
 #define LED_TIME_BLINK2 40
+#define LED_TIME_BLINK3 5
 #define LED_TIME_SHORT 100
 #define LED_TIME_LONG 1000
 /* USER CODE END PD */
@@ -75,15 +76,23 @@ void tlacitka(void) {
 	static uint32_t old_s2;
 	static uint32_t off_time;
 	static uint32_t delay;
-	//static uint16_t debounce = 0xFFFF;
+	static uint16_t debounce = 0xFFFF;
 	uint32_t new_s1 = LL_GPIO_IsInputPinSet(S1_GPIO_Port, S1_Pin);
 	uint32_t new_s2 = LL_GPIO_IsInputPinSet(S2_GPIO_Port, S2_Pin);
+
+	/* if (Tick > delay + LED_TIME_BLINK3) {
+	 debounce <<= 1;
+	 if (GPIOC->LL_GPIO)
+	 debounce |= 0x0001;
+	 if (debounce == 0x7FFF) {
+	 }*/
 
 	if (Tick > delay + LED_TIME_BLINK2) {
 		if (old_s1 && !new_s1) { // falling edge
 			off_time = Tick + LED_TIME_LONG;
 			LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin);
-		} else if (old_s2 && !new_s2) { // falling edge
+		}
+		if (old_s2 && !new_s2) { // falling edge
 			off_time = Tick + LED_TIME_SHORT;
 			LL_GPIO_SetOutputPin(LED2_GPIO_Port, LED2_Pin);
 		}
@@ -94,7 +103,10 @@ void tlacitka(void) {
 			LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin);
 		}
 	}
+//}
 }
+
+
 /* USER CODE END 0 */
 
 /**
@@ -135,9 +147,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-	  blikac();
 	  tlacitka();
+	  blikac();
+    /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -288,7 +301,7 @@ static void MX_GPIO_Init(void)
   /**/
   GPIO_InitStruct.Pin = S2_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(S2_GPIO_Port, &GPIO_InitStruct);
 
   /**/
