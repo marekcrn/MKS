@@ -31,6 +31,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ADC_Q 12
+/* Temperature sensor calibration value address */
 
 /* USER CODE END PD */
 
@@ -45,7 +47,7 @@ ADC_HandleTypeDef hadc;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+static uint32_t button = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,10 +62,36 @@ static void MX_ADC_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 static volatile uint32_t raw_pot;
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+static volatile uint32_t raw_volt;
+static volatile uint32_t raw_temp;
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
- raw_pot = HAL_ADC_GetValue(hadc);
+	static uint32_t avg_pot;
+	static uint8_t channel;
+	switch (channel) {
+		case 0: {
+			raw_pot = avg_pot >> ADC_Q;
+			avg_pot -= raw_pot;
+			avg_pot += HAL_ADC_GetValue(hadc);
+		}
+		break;
+		case 1: {
+			raw_temp = HAL_ADC_GetValue(hadc);
+		}
+		break;
+		case 2: {
+			raw_volt = HAL_ADC_GetValue(hadc);
+
+		}
+		break;
+	}
+	if (__HAL_ADC_GET_FLAG(hadc, ADC_FLAG_EOS))
+		channel = 0;
+	else
+		channel++;
+
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -73,7 +101,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	sct_init();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -97,8 +125,20 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC_Init();
   /* USER CODE BEGIN 2 */
+  sct_init();
   HAL_ADCEx_Calibration_Start(&hadc);
   HAL_ADC_Start_IT(&hadc);
+
+
+
+ #define TEMP110_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7C2))
+ #define TEMP30_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7B8))
+ /* Internal voltage reference calibration value address */
+ #define VREFINT_CAL_ADDR ((uint16_t*) ((uint32_t) 0x1FFFF7BA))
+
+  static enum { SHOW_POT, SHOW_VOLT, SHOW_TEMP } state = SHOW_POT;
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,9 +147,46 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
+
+
     /* USER CODE BEGIN 3 */
-	sct_value((raw_pot * (500 + 1)) / 4096, (raw_pot * 9) / 4096);
-	HAL_Delay(50);
+		if (!HAL_GPIO_ReadPin(GPIOC, S1_Pin)) {
+			button = HAL_GetTick();
+			state = SHOW_VOLT;
+		}
+		if (!HAL_GPIO_ReadPin(GPIOC, S2_Pin)) {
+			button = HAL_GetTick();
+			state = SHOW_TEMP;
+		}
+		if ((HAL_GetTick() - button) > 1000) {
+			//button  = 0;
+			state = SHOW_POT;
+		}
+
+		switch (state) {
+		case SHOW_POT: {
+			sct_value((raw_pot * (500 + 1)) / 4095, (raw_pot * 9) / 4095);
+		}
+			break;
+
+		case SHOW_VOLT: {
+			uint32_t voltage = 330 * (*VREFINT_CAL_ADDR) / raw_volt;
+			sct_value(voltage, 0);
+		}
+			break;
+
+		case SHOW_TEMP: {
+			int32_t temperature = (raw_temp - (int32_t) (*TEMP30_CAL_ADDR));
+			temperature = temperature * (int32_t) (110 - 30);
+			temperature = temperature
+					/ (int32_t) (*TEMP110_CAL_ADDR - *TEMP30_CAL_ADDR);
+			temperature = temperature + 30;
+			sct_value(temperature, 0);
+		}
+			break;
+		}
+
+	  	  HAL_Delay(50);
   }
   /* USER CODE END 3 */
 }
