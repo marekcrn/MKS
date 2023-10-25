@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,6 +35,7 @@
 /* USER CODE BEGIN PD */
 #define RX_BUFFER_LEN 64
 #define CMD_BUFFER_LEN 256
+#define EEPROM_ADDR  0xA0
 static uint8_t uart_rx_buf[RX_BUFFER_LEN];
 static volatile uint16_t uart_rx_read_ptr = 0;
 #define uart_rx_write_ptr (RX_BUFFER_LEN - hdma_usart2_rx.Instance->CNDTR)
@@ -68,8 +70,8 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 static void uart_process_command(char *cmd)
 {
-	static uint32_t LED1;
-	static uint32_t LED2;
+	uint16_t addr;
+	uint8_t value;
 	char *token;
 
 	token = strtok(cmd, " ");
@@ -97,27 +99,64 @@ static void uart_process_command(char *cmd)
 		printf("OK\n");
 	}
 	else if (strcasecmp(token, "STATUS") == 0) {
-		LED1 = HAL_GPIO_ReadPin (LED1_GPIO_Port, LED1_Pin);
-		LED2 = HAL_GPIO_ReadPin (LED2_GPIO_Port, LED2_Pin);
+		uint32_t LED1 = HAL_GPIO_ReadPin (LED1_GPIO_Port, LED1_Pin);
+		uint32_t LED2 = HAL_GPIO_ReadPin (LED2_GPIO_Port, LED2_Pin);
 
 		if (LED1 == 0) {
 			printf("LED1 OFF\n");
 		}
-		else if (LED1 == 1) {
+		else {
 			printf("LED1 ON\n");
 		}
 		if (LED2 == 0) {
 			printf("LED2 OFF\n");
 		}
-		else if (LED2 == 1) {
+		else {
 			printf("LED2 ON\n");
 		}
 	}
-	else{
-		printf("prijato: '%s'\n", cmd);
+	else if (strcasecmp(token, "READ") == 0) {
+		// read requested address
+		token = strtok(NULL, " ");
+		addr = atoi(token);
+		if (HAL_I2C_Mem_Read(&hi2c1, EEPROM_ADDR, addr, I2C_MEMADD_SIZE_16BIT, &value, 1, 1000) == HAL_OK){
+			printf("Adresa 0x%04X : %d\n", addr, value);
+		}
 	}
+	else if (strcasecmp(token, "WRITE") == 0) {
+		// read address to be written to
+		token = strtok(NULL, " ");
+		addr = atoi(token);
+		// read value to be written
+		token = strtok(NULL, " ");
+        value = atoi(token);
+		if (HAL_I2C_Mem_Write(&hi2c1, EEPROM_ADDR, addr, I2C_MEMADD_SIZE_16BIT, &value, 1, 1000) == HAL_OK) {
+			printf("OK\n");
+		}
+		/* Check if the EEPROM is ready for a new operation */
+		while (HAL_I2C_IsDeviceReady(&hi2c1, EEPROM_ADDR, 300, 1000) == HAL_TIMEOUT) {}
+	}
+	else if (strcasecmp(token, "DUMP") == 0) {
+		for (addr = 0; addr<8; addr++){
+			if (HAL_I2C_Mem_Read(&hi2c1, EEPROM_ADDR, addr, I2C_MEMADD_SIZE_16BIT, &value, 1, 1000) != HAL_OK){
+				return;
+			}
+			printf("0x%02X ", value);
+		}
+		printf("\n");
+		for (uint8_t addr = 8; addr<16; addr++){
+			if (HAL_I2C_Mem_Read(&hi2c1, EEPROM_ADDR, addr,
+					I2C_MEMADD_SIZE_16BIT, &value, 1, 1000) != HAL_OK) {
+				return;
+			}
+			printf("0x%02X ", value);
+		}
+		printf("\n");
+	}
+	else {
+		printf("prijato: '%s'\n", cmd);
+    }
 }
-
 int _write(int file, char const *buf, int n)
 {
 	/* stdout redirection to UART2 */
