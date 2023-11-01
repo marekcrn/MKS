@@ -1,5 +1,7 @@
 #MicroXplorer Configuration settings - do not modify
-ADC.IPParameters=Resolution
+ADC.ContinuousConvMode=ENABLE
+ADC.IPParameters=Resolution,ContinuousConvMode,Overrun
+ADC.Overrun=ADC_OVR_DATA_OVERWRITTEN
 ADC.Resolution=ADC_RESOLUTION_10B
 CAD.formats=
 CAD.pinconfig=

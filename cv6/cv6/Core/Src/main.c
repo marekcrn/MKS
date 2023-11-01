@@ -33,6 +33,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define CONVERT_T_DELAY 750
+#define DELAY_NTC 50
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -79,7 +80,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  OWInit();
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -94,8 +95,10 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC_Init();
   /* USER CODE BEGIN 2 */
+   OWInit();
   HAL_ADCEx_Calibration_Start(&hadc);
   HAL_ADC_Start(&hadc);
+  static enum { DS18B20, NTC } state = NTC;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,13 +106,40 @@ int main(void)
   while (1)
   {
 	int16_t temp;
+	static int16_t delay;
 
-	/*OWConvertAll();
-	HAL_Delay(CONVERT_T_DELAY);
-	OWReadTemperature(&temp);
-	sct_value(temp/10,0);*/
-	temp = HAL_ADC_GetValue(&hadc);
-	sct_value(lookup[temp],0);
+	if (!HAL_GPIO_ReadPin(GPIOC, S1_Pin)) {
+		state = DS18B20;
+	}
+	if (!HAL_GPIO_ReadPin(GPIOC, S2_Pin)) {
+		state = NTC;
+	}
+
+	switch (state) {
+	case DS18B20: {
+		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 1);
+		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
+		if (HAL_GetTick() > delay + CONVERT_T_DELAY) {
+			OWConvertAll();
+			//HAL_Delay(CONVERT_T_DELAY);
+			OWReadTemperature(&temp);
+			sct_value(temp/10,0);
+			delay = HAL_GetTick();
+		}
+
+	}
+	case NTC: {
+		if (HAL_GetTick() > delay + DELAY_NTC) {
+			temp = HAL_ADC_GetValue(&hadc);
+			sct_value(lookup[temp],0);
+			delay = HAL_GetTick();
+			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+			HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, 0);
+		}
+	}
+		break;
+	}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -185,12 +215,12 @@ static void MX_ADC_Init(void)
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc.Init.LowPowerAutoWait = DISABLE;
   hadc.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.ContinuousConvMode = ENABLE;
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc.Init.DMAContinuousRequests = DISABLE;
-  hadc.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
   if (HAL_ADC_Init(&hadc) != HAL_OK)
   {
     Error_Handler();
