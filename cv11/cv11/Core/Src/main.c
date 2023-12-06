@@ -162,7 +162,7 @@ int main(void)
   {
 	  button_pressed = HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin);
 
-	  if (button_pressed == 1)
+	  if (button_pressed)
 	  {
 		  smiley_face();
 	  }
