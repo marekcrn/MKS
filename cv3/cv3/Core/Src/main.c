@@ -115,9 +115,12 @@ int main(void)
 			sct_value(111 * i);
 			HAL_Delay(1000);
 		}*/
-
+	  
+		//read value from counter (htim1)
 		uint16_t encod = __HAL_TIM_GET_COUNTER(&htim1);
+	   	// set value on LED display
 		sct_value(encod);
+	  	// wait 50ms
 		HAL_Delay(50);
   }
   /* USER CODE END 3 */
