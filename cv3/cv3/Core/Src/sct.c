@@ -7,6 +7,9 @@
 #include "sct.h"
 #include "main.h"
 
+// array with translation table
+// first index chooses display (first, second or third)
+// second index chooses requested digit (0,1,2,3,4,5,6,7,8,9)
 static const uint32_t reg_values[3][10] = {
 		{
 		//PCDE--------GFAB @ DIS1
@@ -55,14 +58,14 @@ void sct_init(void)
 
 static void tick(void)
 {
-	HAL_GPIO_WritePin(SCT_CLK_GPIO_Port, SCT_CLK_Pin, 1);
-	HAL_GPIO_WritePin(SCT_CLK_GPIO_Port, SCT_CLK_Pin, 0);
+	HAL_GPIO_WritePin(SCT_CLK_GPIO_Port, SCT_CLK_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(SCT_CLK_GPIO_Port, SCT_CLK_Pin, GPIO_PIN_RESET);
 }
 
 static void tickLatch(void)
 {
-	HAL_GPIO_WritePin(SCT_NLA_GPIO_Port, SCT_NLA_Pin, 1);
-	HAL_GPIO_WritePin(SCT_NLA_GPIO_Port, SCT_NLA_Pin, 0);
+	HAL_GPIO_WritePin(SCT_NLA_GPIO_Port, SCT_NLA_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(SCT_NLA_GPIO_Port, SCT_NLA_Pin, GPIO_PIN_RESET);
 }
 
 void sct_led(uint32_t value) {
@@ -75,10 +78,15 @@ void sct_led(uint32_t value) {
 	tickLatch();
 }
 
+// sets 7seg display to display requested value
 void sct_value(uint32_t value) {
 	uint32_t reg = 0;
+	// find digit for 1st display (hundreds)
 	reg |= reg_values[0][value / 100 % 10];
+	// find digit for 2nd display (tenths)
 	reg |= reg_values[1][value / 10 % 10];
+	// find digit for 3rd display (ones)
 	reg |= reg_values[2][value / 1 % 10];
+	//send calculated req value to sct_led to display it
 	sct_led(reg);
 }
